@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.CountDownLatch;
 
 
 
@@ -14,6 +15,8 @@ public class ConnectionMaker {
 	static final String URL = "jdbc:mysql://localhost:3306/";
 	static final String USERNAME_STRING = "root";
 	static final String PASSWORD_STRING = "root";
+	
+	static final String CREATE_SCHEMA = "CREATE SCHEMA bankapp";
 	
 	static final String INITIAL_TABLE = "CREATE TABLE ACCOUNTS(id INT not NULL, PRIMARY KEY(id));";
 	
@@ -38,6 +41,7 @@ public class ConnectionMaker {
 		
 		try {
 			conn = DriverManager.getConnection(URL, USERNAME_STRING, PASSWORD_STRING);
+			executeUpdate(conn, CREATE_SCHEMA);
 			executeUpdate(conn, USE_DATABASE);
 			executeUpdate(conn, INITIAL_TABLE);
 		}catch (SQLException e) {
@@ -49,13 +53,15 @@ public class ConnectionMaker {
 	
 	
 	public static void executeUpdate(Connection conn, String sqlString) {
+		int count = 0;
 		try {
 			Statement statement = conn.createStatement();
 			
-			int count = statement.executeUpdate(sqlString);
+			 count = statement.executeUpdate(sqlString);
+			System.out.println(count);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			count++;
 		}
 	}
 
